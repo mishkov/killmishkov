@@ -20,5 +20,5 @@ jobs:
       - uses: subosito/flutter-action@v1
       - uses: bluefireteam/flutter-gh-pages@v7
         with:
-          baseHref: /kill_mishkov/
+          baseHref: /killmishkov/
           webRenderer: html
