@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:svg_path_parser/svg_path_parser.dart';
 import 'package:teledart/teledart.dart';
 import 'package:teledart/telegram.dart';
@@ -290,11 +291,22 @@ class _MyHomePageState extends State<MyHomePage>
         return;
       }
 
-      await _teleDart!.setGameScore(
-        int.parse(maybeUserIdString),
-        _score,
-        inlineMessageId: maybeInlineMessageIdString,
+      await http.get(
+        Uri.parse(
+          'https://api.telegram.org/'
+          'bot${Env.botToken}/'
+          'setGameScore?'
+          'user_id=${int.parse(maybeUserIdString)}&'
+          'score=$_score&'
+          'inline_message_id=$maybeInlineMessageIdString',
+        ),
       );
+
+      // await _teleDart!.setGameScore(
+      //   int.parse(maybeUserIdString),
+      //   _score,
+      //   inlineMessageId: maybeInlineMessageIdString,
+      // );
     } catch (e) {
       print('some errors occured');
       print(e);
