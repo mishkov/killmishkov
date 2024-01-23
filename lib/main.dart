@@ -284,23 +284,16 @@ class _MyHomePageState extends State<MyHomePage>
         return;
       }
 
-      final maybeChatIdString = Uri.base.queryParameters['chatId'];
-      if (maybeChatIdString == null ||
-          int.tryParse(maybeChatIdString) == null) {
-        return;
-      }
-
-      final maybeMessageIdString = Uri.base.queryParameters['messageId'];
-      if (maybeMessageIdString == null ||
-          int.tryParse(maybeMessageIdString) == null) {
+      final maybeInlineMessageIdString =
+          Uri.base.queryParameters['inlineMessageId'];
+      if (maybeInlineMessageIdString == null) {
         return;
       }
 
       await _teleDart!.setGameScore(
         int.parse(maybeUserIdString),
         _score,
-        chatId: int.parse(maybeChatIdString),
-        messageId: int.parse(maybeMessageIdString),
+        inlineMessageId: maybeInlineMessageIdString,
       );
     } catch (e) {
       print('some errors occured');
