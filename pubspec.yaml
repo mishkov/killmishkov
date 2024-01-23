@@ -39,7 +39,7 @@ dependencies:
   http: ^1.2.0
   teledart: ^0.6.1
   envied: ^0.5.3
-  audioplayers: ^0.18.3
+  audioplayers: ^5.2.1
 
 dev_dependencies:
   flutter_test:

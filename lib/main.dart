@@ -181,9 +181,8 @@ class _MyHomePageState extends State<MyHomePage>
                           _controller.forward();
                         });
                         player.stop();
-
                         player.play(
-                          'assets/audio2.mp3',
+                          AssetSource('audio2.mp3'),
                           volume: _volume,
                         );
                       } else {
@@ -195,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage>
                         });
                         player.stop();
 
-                        player.play('assets/audio.mp3', volume: _volume);
+                        player.play(AssetSource('audio.mp3'), volume: _volume);
                       }
                       // path.contains(point)
                     },
