@@ -39,6 +39,7 @@ dependencies:
   http: ^1.2.0
   teledart: ^0.6.1
   envied: ^0.5.3
+  audioplayers: ^0.18.3
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,8 @@ flutter:
     - assets/target.png
     - assets/mask.svg
     - assets/shield.webp
+    - assets/audio.mp3
+    - assets/audio2.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

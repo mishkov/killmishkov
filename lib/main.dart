@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
@@ -57,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage>
   int _score = 0;
 
   int _speed = 5000;
+
+  final player = AudioPlayer();
 
   late AnimationController _controller;
   TeleDart? _teleDart;
@@ -175,6 +178,8 @@ class _MyHomePageState extends State<MyHomePage>
                           _controller.duration = Duration(milliseconds: _speed);
                           _controller.forward();
                         });
+                        player.stop();
+                        player.play('assets/audio2.mp3');
                       } else {
                         if (_tries == 1) {
                           endgame();
@@ -182,6 +187,8 @@ class _MyHomePageState extends State<MyHomePage>
                         setState(() {
                           _tries--;
                         });
+                        player.stop();
+                        player.play('assets/audio.mp3');
                       }
                       // path.contains(point)
                     },
