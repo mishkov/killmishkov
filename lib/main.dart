@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:svg_path_parser/svg_path_parser.dart';
 import 'package:teledart/teledart.dart';
-import 'package:teledart/telegram.dart';
 
 import 'env.dart';
 
@@ -67,18 +66,6 @@ class _MyHomePageState extends State<MyHomePage>
   late AnimationController _controller;
   TeleDart? _teleDart;
 
-  Future<void> _initBot() async {
-    var telegram = Telegram(Env.botToken);
-    final bot = await telegram.getMe();
-    final botUsername = bot.username;
-
-    if (botUsername == null) {
-      return;
-    }
-
-    _teleDart = TeleDart(Env.botToken, Event(botUsername));
-  }
-
   @override
   void initState() {
     _controller = AnimationController(
@@ -121,8 +108,6 @@ class _MyHomePageState extends State<MyHomePage>
       (targetSize - shieldSize) / 2,
       (targetSize - shieldSize) / 2,
     ));
-
-    _initBot();
 
     super.initState();
   }
