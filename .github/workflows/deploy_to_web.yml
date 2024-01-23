@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2 # Only works with v2
         with:
-          ref: master
+          ref: main
       - uses: subosito/flutter-action@v1
       - uses: bluefireteam/flutter-gh-pages@v7
         with:
