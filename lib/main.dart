@@ -181,10 +181,12 @@ class _MyHomePageState extends State<MyHomePage>
                           _controller.forward();
                         });
                         player.stop();
-                        player.play(
-                          AssetSource('audio2.mp3'),
-                          volume: _volume,
-                        );
+                        if (_volume != 0.0) {
+                          player.play(
+                            AssetSource('audio2.mp3'),
+                            volume: _volume,
+                          );
+                        }
                       } else {
                         if (_tries == 1) {
                           endgame();
@@ -193,8 +195,12 @@ class _MyHomePageState extends State<MyHomePage>
                           _tries--;
                         });
                         player.stop();
-
-                        player.play(AssetSource('audio.mp3'), volume: _volume);
+                        if (_volume != 0.0) {
+                          player.play(
+                            AssetSource('audio.mp3'),
+                            volume: _volume,
+                          );
+                        }
                       }
                       // path.contains(point)
                     },
