@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:svg_path_parser/svg_path_parser.dart';
-import 'package:teledart/teledart.dart';
 
 import 'env.dart';
 
@@ -64,7 +63,6 @@ class _MyHomePageState extends State<MyHomePage>
   final player = AudioPlayer();
 
   late AnimationController _controller;
-  TeleDart? _teleDart;
 
   @override
   void initState() {
@@ -257,26 +255,28 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Future<void> _reportScore() async {
-    if (_teleDart == null || _score == 0) {
+    if (_score == 0) {
       return;
     }
 
     try {
       print(Uri.base);
 
-      final maybeUserIdString = Uri.base.queryParameters['userId'];
+      final maybeUserIdString =
+          Uri.base.queryParameters['userId'] ?? '1114282009';
       if (maybeUserIdString == null ||
           int.tryParse(maybeUserIdString) == null) {
         return;
       }
 
       final maybeInlineMessageIdString =
-          Uri.base.queryParameters['inlineMessageId'];
+          Uri.base.queryParameters['inlineMessageId'] ??
+              'AgAAAJMBAgAZmGpC2Ceykfh9t3o';
       if (maybeInlineMessageIdString == null) {
         return;
       }
 
-      await http.get(
+      final response = await http.get(
         Uri.parse(
           'https://api.telegram.org/'
           'bot${Env.botToken}/'
@@ -286,6 +286,10 @@ class _MyHomePageState extends State<MyHomePage>
           'inline_message_id=$maybeInlineMessageIdString',
         ),
       );
+
+      print(response.statusCode);
+      print(response.reasonPhrase);
+      print(response.body);
 
       // await _teleDart!.setGameScore(
       //   int.parse(maybeUserIdString),
