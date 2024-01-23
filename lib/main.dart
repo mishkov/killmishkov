@@ -59,6 +59,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   int _speed = 5000;
 
+  double _volume = 1.0;
+
   final player = AudioPlayer();
 
   late AnimationController _controller;
@@ -179,7 +181,11 @@ class _MyHomePageState extends State<MyHomePage>
                           _controller.forward();
                         });
                         player.stop();
-                        player.play('assets/audio2.mp3');
+
+                        player.play(
+                          'assets/audio2.mp3',
+                          volume: _volume,
+                        );
                       } else {
                         if (_tries == 1) {
                           endgame();
@@ -188,7 +194,8 @@ class _MyHomePageState extends State<MyHomePage>
                           _tries--;
                         });
                         player.stop();
-                        player.play('assets/audio.mp3');
+
+                        player.play('assets/audio.mp3', volume: _volume);
                       }
                       // path.contains(point)
                     },
@@ -216,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage>
             ),
           ),
           Align(
-            alignment: Alignment.bottomRight,
+            alignment: Alignment.bottomLeft,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -228,6 +235,20 @@ class _MyHomePageState extends State<MyHomePage>
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          setState(() {
+            if (_volume == 0.0) {
+              _volume = 1.0;
+            } else {
+              _volume = 0.0;
+            }
+          });
+        },
+        child: Icon(
+          _volume == 0.0 ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+        ),
       ),
     );
   }
