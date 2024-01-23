@@ -239,6 +239,7 @@ class _MyHomePageState extends State<MyHomePage>
       _speed = 5000;
 
       _controller.reset();
+      _controller.duration = Duration(milliseconds: _speed);
       _controller.forward();
     });
   }
