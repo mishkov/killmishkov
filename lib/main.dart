@@ -325,8 +325,8 @@ class _MyHomePageState extends State<MyHomePage>
     } catch (e) {
       _reportToBot('some errors occured');
       _reportToBot(e);
-      log('some errors occured');
-      log(e.toString());
+      print('some errors occured');
+      print(e.toString());
     }
   }
 
@@ -344,11 +344,11 @@ class _MyHomePageState extends State<MyHomePage>
           'text=$encodedMessage',
         ),
       );
-      log(response.statusCode.toString());
-      log(response.reasonPhrase ?? 'no phrase');
-      log(response.body);
+      print(response.statusCode.toString());
+      print(response.reasonPhrase ?? 'no phrase');
+      print(response.body);
     } catch (e) {
-      log(e.toString());
+      print(e.toString());
     }
   }
 
