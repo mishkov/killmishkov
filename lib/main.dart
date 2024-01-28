@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:game/env.dart';
 import 'package:http/http.dart' as http;
 import 'package:svg_path_parser/svg_path_parser.dart';
 
@@ -258,20 +259,16 @@ class _MyHomePageState extends State<MyHomePage>
     }
 
     try {
-      // https://mishkov.github.io/killmishkov/?userId=1114282009&inlineMessageId=AgAAAHABAgAZmGpC2J9MA76qA-8
       print(Uri.base);
 
-      final maybeUserIdString =
-          Uri.base.queryParameters['userId'] ?? '1114282009';
+      final maybeUserIdString = Uri.base.queryParameters['userId'];
       if (maybeUserIdString == null ||
           int.tryParse(maybeUserIdString) == null) {
         return;
       }
       final userId = int.parse(maybeUserIdString);
 
-      final maybeInlineMessageId =
-          Uri.base.queryParameters['inlineMessageId'] ??
-              'AgAAAHABAgAZmGpC2J9MA76qA-8';
+      final maybeInlineMessageId = Uri.base.queryParameters['inlineMessageId'];
 
       final maybeChatIdString = Uri.base.queryParameters['chatId'];
       int? maybeChatId;
@@ -293,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage>
           Uri(
             scheme: 'https',
             host: 'api.telegram.org',
-            path: 'setGameScore',
+            path: 'bot${Env.botToken}/setGameScore',
             queryParameters: {
               'user_id': userId.toString(),
               'score': _score.toString(),
@@ -306,7 +303,7 @@ class _MyHomePageState extends State<MyHomePage>
           Uri(
             scheme: 'https',
             host: 'api.telegram.org',
-            path: 'setGameScore',
+            path: 'bot${Env.botToken}/setGameScore',
             queryParameters: {
               'user_id': userId.toString(),
               'score': _score.toString(),
@@ -317,15 +314,18 @@ class _MyHomePageState extends State<MyHomePage>
         );
       }
 
-      _reportToBot(response.request?.url ?? 'NO_REQUEST_URL');
-      _reportToBot(response.statusCode);
-      _reportToBot(response.reasonPhrase ?? 'NO_PHRASE');
-      _reportToBot(response.body);
-      
-      print(response.request?.url ?? 'NO_REQUEST_URL');
-      print(response.statusCode);
-      print(response.reasonPhrase ?? 'NO_PHRASE');
-      print(response.body);
+      await _reportToBot(
+          'set score request url: ${response.request?.url ?? 'NO_REQUEST_URL'}');
+      await _reportToBot('set score status code: ${response.statusCode}');
+      await _reportToBot(
+          'set score reaseon phrase: ${response.reasonPhrase ?? 'NO_PHRASE'}');
+      await _reportToBot('set score request body: ${response.body}');
+
+      print(
+          'set score request url ${response.request?.url ?? 'NO_REQUEST_URL'}');
+      print('set score status code ${response.statusCode}');
+      print('set score reaseon phrase ${response.reasonPhrase ?? 'NO_PHRASE'}');
+      print('set score request body ${response.body}');
 
       // await _teleDart!.setGameScore(
       //   int.parse(maybeUserIdString),
@@ -342,17 +342,20 @@ class _MyHomePageState extends State<MyHomePage>
 
   Future<void> _reportToBot(Object something) async {
     try {
-      final message = (something).toString();
+      var message = (something).toString();
+      if (message.isEmpty) {
+        message = 'NO_CONTENT';
+      }
       const adminChatId = 1114282009;
       final encodedMessage = Uri.encodeFull(message);
       final response = await http.get(
         Uri(
           scheme: 'https',
           host: 'api.telegram.org',
-          path: 'sendMessage',
+          path: 'bot${Env.botToken}/sendMessage',
           queryParameters: {
             'chat_id': adminChatId.toString(),
-            'text': encodedMessage.toString(),
+            'text': message,
           },
         ),
       );
