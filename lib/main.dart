@@ -1,12 +1,8 @@
-import 'dart:developer';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:svg_path_parser/svg_path_parser.dart';
-
-import 'env.dart';
 
 void main() {
   runApp(const MyApp());
@@ -262,16 +258,20 @@ class _MyHomePageState extends State<MyHomePage>
     }
 
     try {
+      // https://mishkov.github.io/killmishkov/?userId=1114282009&inlineMessageId=AgAAAHABAgAZmGpC2J9MA76qA-8
       print(Uri.base);
 
-      final maybeUserIdString = Uri.base.queryParameters['userId'];
+      final maybeUserIdString =
+          Uri.base.queryParameters['userId'] ?? '1114282009';
       if (maybeUserIdString == null ||
           int.tryParse(maybeUserIdString) == null) {
         return;
       }
       final userId = int.parse(maybeUserIdString);
 
-      final maybeInlineMessageId = Uri.base.queryParameters['inlineMessageId'];
+      final maybeInlineMessageId =
+          Uri.base.queryParameters['inlineMessageId'] ??
+              'AgAAAHABAgAZmGpC2J9MA76qA-8';
 
       final maybeChatIdString = Uri.base.queryParameters['chatId'];
       int? maybeChatId;
@@ -290,33 +290,42 @@ class _MyHomePageState extends State<MyHomePage>
       http.Response? response;
       if (maybeInlineMessageId != null) {
         response = await http.get(
-          Uri.parse(
-            'https://api.telegram.org/'
-            'bot${Env.botToken}/'
-            'setGameScore?'
-            'user_id=$userId&'
-            'score=$_score&'
-            'inline_message_id=$maybeInlineMessageId',
+          Uri(
+            scheme: 'https',
+            host: 'api.telegram.org',
+            path: 'setGameScore',
+            queryParameters: {
+              'user_id': userId.toString(),
+              'score': _score.toString(),
+              'inline_message_id': maybeInlineMessageId,
+            },
           ),
         );
       } else {
         response = await http.get(
-          Uri.parse(
-            'https://api.telegram.org/'
-            'bot${Env.botToken}/'
-            'setGameScore?'
-            'user_id=$userId&'
-            'score=$_score&'
-            'message_id=$maybeMessageId'
-            'chat_id=$maybeChatId',
+          Uri(
+            scheme: 'https',
+            host: 'api.telegram.org',
+            path: 'setGameScore',
+            queryParameters: {
+              'user_id': userId.toString(),
+              'score': _score.toString(),
+              'message_id': (maybeMessageId ?? 'NO_MESSAGE_ID').toString(),
+              'chat_id': (maybeChatId ?? 'NO_CHAT_ID').toString(),
+            },
           ),
         );
       }
 
-      _reportToBot(response.request?.url  ?? 'NO_REQUEST_URL');
+      _reportToBot(response.request?.url ?? 'NO_REQUEST_URL');
       _reportToBot(response.statusCode);
       _reportToBot(response.reasonPhrase ?? 'NO_PHRASE');
       _reportToBot(response.body);
+      
+      print(response.request?.url ?? 'NO_REQUEST_URL');
+      print(response.statusCode);
+      print(response.reasonPhrase ?? 'NO_PHRASE');
+      print(response.body);
 
       // await _teleDart!.setGameScore(
       //   int.parse(maybeUserIdString),
@@ -337,18 +346,21 @@ class _MyHomePageState extends State<MyHomePage>
       const adminChatId = 1114282009;
       final encodedMessage = Uri.encodeFull(message);
       final response = await http.get(
-        Uri.parse(
-          'https://api.telegram.org/'
-          'bot${Env.botToken}/'
-          'sendMessage?'
-          'chat_id=$adminChatId&'
-          'text=$encodedMessage',
+        Uri(
+          scheme: 'https',
+          host: 'api.telegram.org',
+          path: 'sendMessage',
+          queryParameters: {
+            'chat_id': adminChatId.toString(),
+            'text': encodedMessage.toString(),
+          },
         ),
       );
       print(response.statusCode.toString());
       print(response.reasonPhrase ?? 'no phrase');
       print(response.body);
     } catch (e) {
+      print('some errors occured when report to bot');
       print(e.toString());
     }
   }
