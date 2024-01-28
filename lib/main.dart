@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -262,34 +264,58 @@ class _MyHomePageState extends State<MyHomePage>
     try {
       print(Uri.base);
 
-      final maybeUserIdString =
-          Uri.base.queryParameters['userId'] ?? '1114282009';
+      final maybeUserIdString = Uri.base.queryParameters['userId'];
       if (maybeUserIdString == null ||
           int.tryParse(maybeUserIdString) == null) {
         return;
       }
+      final userId = int.parse(maybeUserIdString);
 
-      final maybeInlineMessageIdString =
-          Uri.base.queryParameters['inlineMessageId'] ??
-              'AgAAAJMBAgAZmGpC2Ceykfh9t3o';
-      if (maybeInlineMessageIdString == null) {
-        return;
+      final maybeInlineMessageId = Uri.base.queryParameters['inlineMessageId'];
+
+      final maybeChatIdString = Uri.base.queryParameters['chatId'];
+      int? maybeChatId;
+      if (maybeChatIdString != null &&
+          int.tryParse(maybeChatIdString) != null) {
+        maybeChatId = int.tryParse(maybeChatIdString);
       }
 
-      final response = await http.get(
-        Uri.parse(
-          'https://api.telegram.org/'
-          'bot${Env.botToken}/'
-          'setGameScore?'
-          'user_id=${int.parse(maybeUserIdString)}&'
-          'score=$_score&'
-          'inline_message_id=$maybeInlineMessageIdString',
-        ),
-      );
+      final maybeMessageIdString = Uri.base.queryParameters['messageId'];
+      int? maybeMessageId;
+      if (maybeMessageIdString != null &&
+          int.tryParse(maybeMessageIdString) != null) {
+        maybeMessageId = int.tryParse(maybeMessageIdString);
+      }
 
-      print(response.statusCode);
-      print(response.reasonPhrase);
-      print(response.body);
+      http.Response? response;
+      if (maybeInlineMessageId != null) {
+        response = await http.get(
+          Uri.parse(
+            'https://api.telegram.org/'
+            'bot${Env.botToken}/'
+            'setGameScore?'
+            'user_id=$userId&'
+            'score=$_score&'
+            'inline_message_id=$maybeInlineMessageId',
+          ),
+        );
+      } else {
+        response = await http.get(
+          Uri.parse(
+            'https://api.telegram.org/'
+            'bot${Env.botToken}/'
+            'setGameScore?'
+            'user_id=$userId&'
+            'score=$_score&'
+            'message_id=$maybeMessageId'
+            'chat_id=$maybeChatId',
+          ),
+        );
+      }
+
+      _reportToBot(response.statusCode);
+      _reportToBot(response.reasonPhrase);
+      _reportToBot(response.body);
 
       // await _teleDart!.setGameScore(
       //   int.parse(maybeUserIdString),
@@ -297,8 +323,32 @@ class _MyHomePageState extends State<MyHomePage>
       //   inlineMessageId: maybeInlineMessageIdString,
       // );
     } catch (e) {
-      print('some errors occured');
-      print(e);
+      _reportToBot('some errors occured');
+      _reportToBot(e);
+      log('some errors occured');
+      log(e.toString());
+    }
+  }
+
+  Future<void> _reportToBot(Object? something) async {
+    try {
+      final message = something.toString();
+      const adminChatId = 1114282009;
+      final encodedMessage = Uri.encodeFull(message);
+      final response = await http.get(
+        Uri.parse(
+          'https://api.telegram.org/'
+          'bot${Env.botToken}/'
+          'sendMessage?'
+          'chat_id=$adminChatId&'
+          'text=$encodedMessage',
+        ),
+      );
+      log(response.statusCode.toString());
+      log(response.reasonPhrase ?? 'no phrase');
+      log(response.body);
+    } catch (e) {
+      log(e.toString());
     }
   }
 
