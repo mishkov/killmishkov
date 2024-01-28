@@ -313,8 +313,9 @@ class _MyHomePageState extends State<MyHomePage>
         );
       }
 
+      _reportToBot(response.request?.url  ?? 'NO_REQUEST_URL');
       _reportToBot(response.statusCode);
-      _reportToBot(response.reasonPhrase);
+      _reportToBot(response.reasonPhrase ?? 'NO_PHRASE');
       _reportToBot(response.body);
 
       // await _teleDart!.setGameScore(
@@ -330,9 +331,9 @@ class _MyHomePageState extends State<MyHomePage>
     }
   }
 
-  Future<void> _reportToBot(Object? something) async {
+  Future<void> _reportToBot(Object something) async {
     try {
-      final message = something.toString();
+      final message = (something).toString();
       const adminChatId = 1114282009;
       final encodedMessage = Uri.encodeFull(message);
       final response = await http.get(
